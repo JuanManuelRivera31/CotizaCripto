@@ -1,17 +1,55 @@
 import { useCryptoStore } from "../store"
 import { currencies } from "../data"
+import { useState, type ChangeEvent } from "react";
+import type { Pair } from "../types";
+import ErrorMessage from "./ErrorMessage";
 
 export default function CriptoSearchForm() {
   
     const cryptocurrencies = useCryptoStore((state) => state.cryptocurrencies);
-  
+    const fetchData = useCryptoStore((state) => state.fetchData);
+
+    const [pair, setPair] = useState<Pair>({
+        currency: '',
+        criptocurrency: ''
+    });
+
+    const [error, setError] = useState('');
+
+    const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        setPair({
+            ...pair,
+            [e.target.name]: e.target.value //Actualiza dinamicamente el state para enviar la petición con el valor reciente 
+        })
+    }
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if(Object.values(pair).includes('')) {
+            setError('Todos los campos son obligatorios');
+            return;
+        }
+        setError('');
+        
+        //Consultar la Api si pasa validación
+        fetchData(pair);
+    }
+
     return (
-    <form className="form">
+    <form 
+        className="form"
+        onSubmit={handleSubmit}
+    >
+
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+
         <div className='field'>
             <label htmlFor="currency">Moneda:</label>
             <select 
                 id="currency" 
                 name="currency" //Nos va permitir escribir en el state
+                onChange={handleChange}
+                value={pair.currency}
             >
                 <option value="">-- Seleccione --</option>
                 {currencies.map( currency => (
@@ -30,6 +68,8 @@ export default function CriptoSearchForm() {
             <select 
                 id="criptocurrency" 
                 name="criptocurrency" //Nos va permitir escribir en el state
+                onChange={handleChange}
+                value={pair.criptocurrency}
             >
                 <option value="">-- Seleccione --</option>
                  {cryptocurrencies.map( crypto => (
