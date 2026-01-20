@@ -64,7 +64,7 @@ export default function CriptoSearchForm() {
         </div>
 
         <div className='field'>
-            <label htmlFor="criptocurrency">Criptooneda:</label>
+            <label htmlFor="criptocurrency">Criptomoneda:</label>
             <select 
                 id="criptocurrency" 
                 name="criptocurrency" //Nos va permitir escribir en el state
